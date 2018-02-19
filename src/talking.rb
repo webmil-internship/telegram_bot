@@ -66,7 +66,7 @@ class Talking
       task_today = Task.find(date: Date.today).theme
       bot.api.send_message(
         chat_id: message.chat.id,
-        text: "Hi, #{@user.first_name}! Let's play a game. Send me a photo of #{task_today}, please."
+        text: "Send me a photo of #{task_today}, please."
       )
     end
   end
