@@ -8,7 +8,7 @@ class Sheduller
   def call
     scheduler = Rufus::Scheduler.new
     bot = Telegram::Bot::Client.new(token)
-    scheduler.cron '43 20 * * *' do
+    scheduler.cron '00 09 * * *' do
       Telegram::Bot::Client.run(@token) do |bot|
           Theme.new.send_task
       end

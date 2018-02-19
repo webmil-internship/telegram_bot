@@ -57,23 +57,38 @@ class Talking
   end
 
   def task
-    task_today = Task.find(date: Date.today).theme
-    bot.api.send_message(
+    if Task.find(date: Date.today).nil?
+      bot.api.send_message(
+          chat_id: message.chat.id,
+          text: "Hi, #{@user.first_name}! Task is not ready yet."
+      )
+    else
+      task_today = Task.find(date: Date.today).theme
+      bot.api.send_message(
         chat_id: message.chat.id,
         text: "Hi, #{@user.first_name}! Let's play a game. Send me a photo of #{task_today}, please."
-    )
+      )
+    end
   end
 
   def ratings_today
-    rating = Rating.join(:users, user_id: :user_id).where(date: Date.today).reverse_order(:confidence)
-    i=1
-    text_rates = ''
-    rating.each do |row|
-      text_rates += "#{i}. #{row[:first_name]} - #{row[:confidence]}\n"
-      i+=1
+    if Rating.find(date: Date.today).nil?
+      bot.api.send_message(
+          chat_id: message.chat.id,
+          text: "Hi, #{@user.first_name}! Rating is not ready yet."
+      )
+    else
+      rating = Rating.join(:users, user_id: :user_id).where(date: Date.today).reverse_order(:confidence)
+      i=1
+      text_rates = ''
+      rating.each do |row|
+        text_rates += "#{i}. #{row[:first_name]} - #{row[:confidence]}\n"
+        i+=1
     end
       bot.api.send_message(chat_id: message.chat.id,
-                         text: text_rates)
+                         text: text_rates
+      )
+    end
   end
 
   def all_ratings
@@ -112,6 +127,17 @@ class Talking
       bot.api.send_message(
         chat_id: message.chat.id,
         text: "We already accepted your photo.")
+      true
+    else
+      false
+    end
+  end
+
+  def time_out?
+    if (Time.now.hour < 9 || Time.now.hour > 21)
+      bot.api.send_message(
+          chat_id: message.chat.id,
+          text: "Time out for task.")
       true
     else
       false
