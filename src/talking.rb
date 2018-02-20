@@ -21,8 +21,8 @@ class Talking
     user = User.new(user_id: @user.id, first_name: @user.first_name, last_name: @user.last_name, is_active: true)
     user.save
     bot.api.send_message(
-        chat_id: message.chat.id,
-        text: "Hi, #{@user.first_name}! Let's play a game. Read the /rules.")
+      chat_id: message.chat.id,
+      text: "Hi, #{@user.first_name}! Let's play a game. Read the /rules.")
   end
 
   def hi_user
@@ -30,53 +30,47 @@ class Talking
       if user
         user.update(is_active: true)
         bot.api.send_message(
-            chat_id: message.chat.id,
-            text: "Hi, #{@user.first_name}! Welcome again!")
+          chat_id: message.chat.id,
+          text: "Hi, #{@user.first_name}! Welcome again!")
       elsif User.first(user_id: @user.id, is_active: true)
         bot.api.send_message(
-            chat_id: message.chat.id,
-            text: "Hi, #{@user.first_name}!")
+          chat_id: message.chat.id,
+          text: "Hi, #{@user.first_name}!")
       else
         new_user
       end
-
-    end
+  end
 
   def help
     bot.api.send_message(
       chat_id: message.chat.id,
-      text: HELP
-    )
+      text: HELP)
   end
 
   def rules
     bot.api.send_message(
       chat_id: message.chat.id,
-      text: RULES
-    )
+      text: RULES)
   end
 
   def task
     if Task.find(date: Date.today).nil?
       bot.api.send_message(
           chat_id: message.chat.id,
-          text: "Hi, #{@user.first_name}! Task is not ready yet."
-      )
+          text: "Hi, #{@user.first_name}! Task is not ready yet.")
     else
       task_today = Task.find(date: Date.today).theme
       bot.api.send_message(
         chat_id: message.chat.id,
-        text: "Send me a photo of #{task_today}, please."
-      )
+        text: "Send me a photo of #{task_today}, please.")
     end
   end
 
   def ratings_today
     if Rating.find(date: Date.today).nil?
       bot.api.send_message(
-          chat_id: message.chat.id,
-          text: "Hi, #{@user.first_name}! Rating is not ready yet."
-      )
+        chat_id: message.chat.id,
+        text: "Hi, #{@user.first_name}! Rating is not ready yet.")
     else
       rating = Rating.join(:users, user_id: :user_id).where(date: Date.today).reverse_order(:confidence)
       i=1
@@ -86,16 +80,14 @@ class Talking
         i+=1
     end
       bot.api.send_message(chat_id: message.chat.id,
-                         text: text_rates
-      )
+        text: text_rates)
     end
   end
 
   def all_ratings
     bot.api.send_message(
-        chat_id: message.chat.id,
-        text: 'Not yet'
-    )
+      chat_id: message.chat.id,
+      text: 'Not yet')
   end
 
   def bye_user
@@ -103,23 +95,21 @@ class Talking
     if user
       user.update(is_active: false)
     end
-      @bot.api.send_message(
-          chat_id: @user.id,
-          text: "Bye, #{@user.first_name}. Type /start to start again.")
+      bot.api.send_message(
+        chat_id: @user.id,
+        text: "Bye, #{@user.first_name}. Type /start to start again.")
   end
 
   def right_format
     bot.api.send_message(
       chat_id: message.chat.id,
-      text: 'Your photo has been accepted. Thank you!'
-    )
+      text: 'Your photo has been accepted. Thank you!')
   end
 
   def wrong_format
     bot.api.send_message(
       chat_id: message.chat.id,
-      text: 'Your file has a wrong format. Please, send it again'
-    )
+      text: 'Your file has a wrong format. Please, send it again')
   end
 
   def photo_again?
@@ -127,6 +117,17 @@ class Talking
       bot.api.send_message(
         chat_id: message.chat.id,
         text: "We already accepted your photo.")
+      true
+    else
+      false
+    end
+  end
+
+  def user_in?
+    if User.first(user_id: @user.id, is_active: false)
+      bot.api.send_message(
+        chat_id: message.chat.id,
+        text: "You have stopped the game. Type /start to start again.")
       true
     else
       false

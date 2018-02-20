@@ -22,6 +22,7 @@ Telegram::Bot::Client.run(ENV['token']) do |bot|
   bot.listen do |message|
     talking = Talking.new(bot, message)
     if message.photo.any?
+    next if talking.user_in?
     next if talking.photo_again?
     next if talking.time_out?
       talking.right_format

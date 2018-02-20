@@ -27,6 +27,7 @@ class Analyzer
         current_task = Task.where(date: Date.today).first.theme
         success_result = tags.detect { |tag| current_task == tag['name']}
         return unless success_result
-        Rating.create(user_id:  @user_id, date: Date.today, theme: current_task, confidence: success_result['confidence'])
+        Rating.create(user_id:  @user_id, date: Date.today, theme: current_task,
+                      confidence: success_result['confidence'].round(4))
   end
 end
