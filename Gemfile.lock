@@ -27,6 +27,7 @@ GEM
     mime-types-data (3.2016.0521)
     multipart-post (2.0.0)
     netrc (0.11.0)
+    pg (1.0.0)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -34,7 +35,6 @@ GEM
     rufus-scheduler (3.4.2)
       et-orbi (~> 1.0)
     sequel (5.5.0)
-    sqlite3 (1.3.13)
     telegram-bot-ruby (0.8.6.1)
       faraday
       inflecto
@@ -57,10 +57,10 @@ PLATFORMS
 DEPENDENCIES
   awesome_print
   json
+  pg
   rest-client
   rufus-scheduler
   sequel
-  sqlite3
   telegram-bot-ruby
 
 BUNDLED WITH
