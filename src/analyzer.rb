@@ -1,11 +1,18 @@
 class Analyzer
     MSCV_URL = 'https://westcentralus.api.cognitive.microsoft.com/vision/v1.0/analyze'
-  attr_accessor :token, :mscv_key
-  def initialize(user_id, file_id)
+  attr_accessor :bot, :token, :mscv_key, :message
+  def initialize(bot, user_id, file_id, message)
     @token = ENV['token']
     @mscv_key = ENV['mscv_key']
     @file_id = file_id
-    @user_id = user_id
+    @bot = bot
+    @message = message
+    @user = message.from
+    end
+
+  def result
+    tags = analyze
+    save_ratings(tags)
   end
 
   def analyze
@@ -23,11 +30,20 @@ class Analyzer
           http.request(request)
         end
         tags = JSON.parse(response.body)["tags"]
-#заповнюємо таблицю рейтингів
-        current_task = Task.where(date: Date.today).first.theme
-        success_result = tags.detect { |tag| current_task == tag['name']}
-        return unless success_result
-        Rating.create(user_id:  @user_id, date: Date.today, theme: current_task,
-                      confidence: success_result['confidence'].round(4))
-  end
+   end
+
+   def save_ratings(tags)
+     current_task = Task.where(date: Date.today).first.theme
+     tag_right = true
+     tags.each do |tag|
+       if current_task == tag['name']
+         Rating.create(user_id: @user.id, date: Date.today, theme: current_task,
+                     confidence: tag['confidence'].round(4))
+         return
+       end
+     end
+     bot.api.send_message(
+         chat_id: message.chat.id,
+         text: 'But your photo has a wrong content. Send it again, please.')
+   end
 end

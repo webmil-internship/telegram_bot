@@ -23,10 +23,11 @@ Telegram::Bot::Client.run(ENV['token']) do |bot|
     talking = Talking.new(bot, message)
     if message.photo.any?
     next if talking.user_in?
-    next if talking.photo_again?
     next if talking.time_out?
+    next if talking.task_is?
+    next if talking.photo_again?
       talking.right_format
-      Analyzer.new(message.from.id, message.photo.last.file_id).analyze
+      Analyzer.new(bot, message.from.id, message.photo.last.file_id, message).result
     elsif message.document
       talking.wrong_format
     else

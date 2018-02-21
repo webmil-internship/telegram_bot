@@ -5,7 +5,7 @@ Sequel.migration do
       String :user_id
       Date :date
       String :theme
-      BigDecimal :confidence
+      Float :confidence
     end
   end
 end

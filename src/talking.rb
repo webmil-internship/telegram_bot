@@ -109,7 +109,7 @@ class Talking
   def wrong_format
     bot.api.send_message(
       chat_id: message.chat.id,
-      text: 'Your file has a wrong format. Please, send it again')
+      text: 'Your file has a wrong format. Please, send it again.')
   end
 
   def photo_again?
@@ -139,6 +139,17 @@ class Talking
       bot.api.send_message(
           chat_id: message.chat.id,
           text: "Time out for task.")
+      true
+    else
+      false
+    end
+  end
+
+  def task_is?
+    if !Task.find(date: Date.today)
+      bot.api.send_message(
+          chat_id: message.chat.id,
+          text: "Hi, #{@user.first_name}! Task is not ready yet.")
       true
     else
       false
